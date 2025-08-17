@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, CheckCircle2, Clock, MapPin, Users, LogOut, Menu, X, Filter } from 'lucide-react';
 import LoginPage from './components/LoginPage';
 import Dashboard from './components/Dashboard';
-import { getCookie, setCookie, removeCookie } from './utils/cookies';
+import { getCookie, setCookie, removeCookie, setLocalStorage, getLocalStorage, removeLocalStorage } from './utils/cookies';
 
 interface Activity {
   id: string;
@@ -21,6 +21,7 @@ function App() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSaveNotification, setShowSaveNotification] = useState(false);
+  const [storageAvailable, setStorageAvailable] = useState(true);
 
   // Sample umroh itinerary data
   const defaultActivities: Activity[] = [
@@ -120,6 +121,7 @@ function App() {
 
   useEffect(() => {
     checkAuth();
+    checkStorageAvailability();
     loadActivities();
     setLoading(false);
   }, []);
@@ -131,6 +133,19 @@ function App() {
       console.log('Activities state updated:', activities.length, 'total,', completedCount, 'completed');
     }
   }, [activities]);
+
+  const checkStorageAvailability = () => {
+    try {
+      const testKey = '__test_storage__';
+      localStorage.setItem(testKey, 'test');
+      localStorage.removeItem(testKey);
+      setStorageAvailable(true);
+      console.log('localStorage is available');
+    } catch (error) {
+      setStorageAvailable(false);
+      console.warn('localStorage is not available, falling back to cookies:', error);
+    }
+  };
 
   const checkAuth = () => {
     const session = getCookie('umroh_session');
@@ -146,21 +161,62 @@ function App() {
   };
 
   const loadActivities = () => {
-    const savedActivities = getCookie('umroh_activities');
-    console.log('Loading activities from cookie:', savedActivities);
-    if (savedActivities) {
-      try {
-        const parsedActivities = JSON.parse(decodeURIComponent(savedActivities));
-        console.log('Successfully parsed activities:', parsedActivities.length, 'activities');
-        setActivities(parsedActivities);
-      } catch (error) {
-        console.error('Error parsing activities from cookie:', error);
+    // Try localStorage first (preferred method)
+    const savedActivities = getLocalStorage('umroh_activities');
+    console.log('Loading activities from localStorage:', savedActivities);
+    
+    if (savedActivities && Array.isArray(savedActivities)) {
+      // Validate and clean the data
+      const validatedActivities = validateActivities(savedActivities);
+      console.log('Successfully loaded activities from localStorage:', validatedActivities.length, 'activities');
+      setActivities(validatedActivities);
+    } else {
+      // Fallback to cookies if localStorage is not available
+      const cookieActivities = getCookie('umroh_activities');
+      console.log('Fallback: Loading activities from cookie:', cookieActivities);
+      
+      if (cookieActivities) {
+        try {
+          const parsedActivities = JSON.parse(decodeURIComponent(cookieActivities));
+          const validatedActivities = validateActivities(parsedActivities);
+          console.log('Successfully parsed activities from cookie:', validatedActivities.length, 'activities');
+          setActivities(validatedActivities);
+          // Migrate to localStorage
+          setLocalStorage('umroh_activities', validatedActivities);
+        } catch (error) {
+          console.error('Error parsing activities from cookie:', error);
+          setActivities(defaultActivities);
+        }
+      } else {
+        console.log('No saved activities found, using default activities');
         setActivities(defaultActivities);
       }
-    } else {
-      console.log('No saved activities found, using default activities');
-      setActivities(defaultActivities);
     }
+  };
+
+  const validateActivities = (activities: any[]): Activity[] => {
+    if (!Array.isArray(activities)) {
+      console.warn('Invalid activities data: not an array');
+      return defaultActivities;
+    }
+
+    const validated = activities.filter(activity => {
+      return activity && 
+             typeof activity.id === 'string' &&
+             typeof activity.time === 'string' &&
+             typeof activity.title === 'string' &&
+             typeof activity.description === 'string' &&
+             typeof activity.location === 'string' &&
+             typeof activity.day === 'number' &&
+             typeof activity.completed === 'boolean' &&
+             ['transport', 'ritual', 'meal', 'accommodation', 'sightseeing'].includes(activity.type);
+    });
+
+    if (validated.length !== activities.length) {
+      console.warn('Some activities were invalid and removed:', activities.length - validated.length, 'removed');
+    }
+
+    return validated.length > 0 ? validated : defaultActivities;
   };
 
   const handleLogin = (email: string, password: string) => {
@@ -190,14 +246,18 @@ function App() {
     console.log('Updated activities:', updatedActivities.filter((a: Activity) => a.completed).length, 'completed');
     setActivities(updatedActivities);
     
-    // Save to cookie immediately
-    const activitiesJson = JSON.stringify(updatedActivities);
-    console.log('Saving activities to cookie:', activitiesJson.length, 'characters');
-    setCookie('umroh_activities', encodeURIComponent(activitiesJson), 30); // 30 days
+    // Save to localStorage (primary method)
+    console.log('Saving activities to localStorage');
+    setLocalStorage('umroh_activities', updatedActivities);
     
-    // Verify the cookie was set
-    const savedCookie = getCookie('umroh_activities');
-    console.log('Verification - cookie after save:', savedCookie ? 'exists' : 'not found');
+    // Also save to cookies as backup
+    const activitiesJson = JSON.stringify(updatedActivities);
+    console.log('Saving activities to cookie as backup:', activitiesJson.length, 'characters');
+    setCookie('umroh_activities', encodeURIComponent(activitiesJson), 30);
+    
+    // Verify the localStorage was set
+    const savedLocalStorage = getLocalStorage('umroh_activities');
+    console.log('Verification - localStorage after save:', savedLocalStorage ? 'exists' : 'not found');
     
     // Show save notification
     setShowSaveNotification(true);
@@ -208,8 +268,56 @@ function App() {
     if (window.confirm('Apakah Anda yakin ingin mereset semua aktivitas? Semua progress yang sudah dicentang akan hilang.')) {
       console.log('Resetting activities to default');
       setActivities(defaultActivities);
+      
+      // Save to localStorage
+      setLocalStorage('umroh_activities', defaultActivities);
+      
+      // Also save to cookies as backup
       setCookie('umroh_activities', encodeURIComponent(JSON.stringify(defaultActivities)), 30);
     }
+  };
+
+  const exportActivities = () => {
+    const data = {
+      activities: activities,
+      exportDate: new Date().toISOString(),
+      version: '1.0'
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `umroh-activities-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const importActivities = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target?.result as string);
+        if (data.activities && Array.isArray(data.activities)) {
+          const validatedActivities = validateActivities(data.activities);
+          setActivities(validatedActivities);
+          setLocalStorage('umroh_activities', validatedActivities);
+          setCookie('umroh_activities', encodeURIComponent(JSON.stringify(validatedActivities)), 30);
+          alert('Data berhasil diimpor!');
+        } else {
+          alert('Format file tidak valid!');
+        }
+      } catch (error) {
+        console.error('Error importing activities:', error);
+        alert('Error membaca file!');
+      }
+    };
+    reader.readAsText(file);
   };
 
   if (loading) {
@@ -237,12 +345,21 @@ function App() {
           </div>
         </div>
       )}
+      {!storageAvailable && (
+        <div className="fixed top-4 left-4 z-50 bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in">
+          <div className="flex items-center space-x-2">
+            <span>⚠️ Menggunakan cookies sebagai backup storage</span>
+          </div>
+        </div>
+      )}
       <Dashboard
         user={user}
         activities={activities}
         onLogout={handleLogout}
         onToggleActivity={toggleActivityCompletion}
         onResetActivities={resetActivities}
+        onExportActivities={exportActivities}
+        onImportActivities={importActivities}
       />
     </>
   );

@@ -21,6 +21,33 @@ export const removeCookie = (name: string): void => {
   document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
 };
 
+// LocalStorage utility functions
+export const setLocalStorage = (key: string, value: any): void => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error('Error saving to localStorage:', error);
+  }
+};
+
+export const getLocalStorage = (key: string): any => {
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : null;
+  } catch (error) {
+    console.error('Error reading from localStorage:', error);
+    return null;
+  }
+};
+
+export const removeLocalStorage = (key: string): void => {
+  try {
+    localStorage.removeItem(key);
+  } catch (error) {
+    console.error('Error removing from localStorage:', error);
+  }
+};
+
 // Session management
 export const isSessionValid = (): boolean => {
   const session = getCookie('umroh_session');
@@ -41,5 +68,5 @@ export const getSessionData = (): any => {
 
 export const clearSession = (): void => {
   removeCookie('umroh_session');
-  removeCookie('umroh_activities');
+  removeLocalStorage('umroh_activities');
 };

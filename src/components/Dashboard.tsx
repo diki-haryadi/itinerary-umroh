@@ -21,9 +21,11 @@ interface DashboardProps {
   onLogout: () => void;
   onToggleActivity: (activityId: string) => void;
   onResetActivities: () => void;
+  onExportActivities: () => void;
+  onImportActivities: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ user, activities, onLogout, onToggleActivity, onResetActivities }) => {
+const Dashboard: React.FC<DashboardProps> = ({ user, activities, onLogout, onToggleActivity, onResetActivities, onExportActivities, onImportActivities }) => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -114,6 +116,23 @@ const Dashboard: React.FC<DashboardProps> = ({ user, activities, onLogout, onTog
 
         <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200">
           <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={onExportActivities}
+                className="px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-gray-200 hover:border-blue-200"
+              >
+                Export Data
+              </button>
+              <label className="px-3 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors border border-gray-200 hover:border-green-200 cursor-pointer text-center">
+                Import Data
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={onImportActivities}
+                  className="hidden"
+                />
+              </label>
+            </div>
             <button
               onClick={onResetActivities}
               className="w-full px-3 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-gray-200 hover:border-red-200"

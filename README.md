@@ -1,13 +1,14 @@
 # Umroh Itinerary Tracker
 
-Aplikasi tracking jadwal Umroh dengan fitur penyimpanan progress otomatis menggunakan cookies.
+Aplikasi tracking jadwal Umroh dengan fitur penyimpanan progress otomatis menggunakan localStorage.
 
 ## Fitur Utama
 
 ### ✅ **Penyimpanan Progress Otomatis**
-- Semua aktivitas yang dicentang tersimpan otomatis di browser cookies
+- Semua aktivitas yang dicentang tersimpan otomatis di browser localStorage
 - Data tetap ada setelah reload halaman atau restart browser
-- Progress tersimpan selama 30 hari
+- Progress tersimpan secara permanen (tidak ada batasan waktu)
+- Fallback ke cookies jika localStorage tidak tersedia
 
 ### ✅ **11 Hari Perjalanan Lengkap**
 - Hari 1-2: Perjalanan dari Indonesia ke Madinah
@@ -47,7 +48,7 @@ Aplikasi tracking jadwal Umroh dengan fitur penyimpanan progress otomatis menggu
 
 - **Frontend**: React + TypeScript
 - **Styling**: Tailwind CSS
-- **Storage**: Browser Cookies
+- **Storage**: Browser localStorage (dengan fallback ke cookies)
 - **Icons**: Lucide React
 
 ## Struktur Data
@@ -66,10 +67,22 @@ interface Activity {
 }
 ```
 
-## Cookie Storage
+## Storage System
 
-Aplikasi menggunakan 2 cookie utama:
+Aplikasi menggunakan sistem storage hybrid:
+
+### **Primary Storage: localStorage**
+- `umroh_activities`: Data aktivitas dan progress
+- Tidak ada batasan ukuran data
+- Data tersimpan secara permanen
+- Lebih reliable untuk data yang besar
+
+### **Backup Storage: Cookies**
 - `umroh_session`: Data login user (7 hari)
-- `umroh_activities`: Data aktivitas dan progress (30 hari)
+- `umroh_activities`: Backup data aktivitas (30 hari)
+- Digunakan jika localStorage tidak tersedia
 
-Data JSON di-encode menggunakan `encodeURIComponent()` untuk menangani karakter khusus dan data yang besar.
+### **Migration System**
+- Otomatis migrasi data dari cookies ke localStorage
+- Fallback otomatis jika localStorage tidak tersedia
+- Notifikasi visual jika menggunakan backup storage
