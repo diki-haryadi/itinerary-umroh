@@ -1,0 +1,75 @@
+# Umroh Itinerary Tracker
+
+Aplikasi tracking jadwal Umroh dengan fitur penyimpanan progress otomatis menggunakan cookies.
+
+## Fitur Utama
+
+### ✅ **Penyimpanan Progress Otomatis**
+- Semua aktivitas yang dicentang tersimpan otomatis di browser cookies
+- Data tetap ada setelah reload halaman atau restart browser
+- Progress tersimpan selama 30 hari
+
+### ✅ **11 Hari Perjalanan Lengkap**
+- Hari 1-2: Perjalanan dari Indonesia ke Madinah
+- Hari 3-5: Aktivitas di Madinah (Ziarah, City Tour, Rawdah)
+- Hari 6-9: Perjalanan ke Makkah dan Umroh
+- Hari 10-11: Tawaf Wada dan kembali ke Indonesia
+
+### ✅ **Kategorisasi Aktivitas**
+- 🚗 **Transportasi**: Penerbangan, bus, perjalanan
+- 🕌 **Ibadah**: Shalat, umroh, ziarah
+- 🍽️ **Makan**: Sarapan, makan siang, makan malam
+- 🏨 **Akomodasi**: Check-in/out hotel, istirahat
+- 📸 **Wisata**: City tour, ziarah tempat bersejarah
+
+### ✅ **Fitur Filtering**
+- Filter berdasarkan hari (1-11)
+- Filter berdasarkan jenis aktivitas
+- Tampilkan/sembunyikan aktivitas yang sudah selesai
+
+### ✅ **Progress Tracking**
+- Progress bar menunjukkan persentase aktivitas selesai
+- Statistik aktivitas total dan yang sudah selesai
+- Notifikasi visual saat progress tersimpan
+
+### ✅ **Fitur Reset**
+- Tombol reset untuk mengembalikan semua aktivitas ke status awal
+- Konfirmasi dialog untuk mencegah reset tidak sengaja
+
+## Cara Penggunaan
+
+1. **Login**: Gunakan email `admin@gmail.com` dan password `admin`
+2. **Centang Aktivitas**: Klik lingkaran di sebelah kiri aktivitas untuk menandai selesai
+3. **Filter**: Gunakan sidebar untuk memfilter aktivitas berdasarkan hari atau jenis
+4. **Reset**: Klik "Reset Semua Aktivitas" di sidebar jika ingin mengulang dari awal
+
+## Teknologi
+
+- **Frontend**: React + TypeScript
+- **Styling**: Tailwind CSS
+- **Storage**: Browser Cookies
+- **Icons**: Lucide React
+
+## Struktur Data
+
+Setiap aktivitas memiliki properti:
+```typescript
+interface Activity {
+  id: string;           // ID unik aktivitas
+  time: string;         // Waktu aktivitas (format: HH:MM)
+  title: string;        // Judul aktivitas
+  description: string;  // Deskripsi detail
+  location: string;     // Lokasi aktivitas
+  day: number;          // Hari ke berapa (1-11)
+  completed: boolean;   // Status selesai
+  type: 'transport' | 'ritual' | 'meal' | 'accommodation' | 'sightseeing';
+}
+```
+
+## Cookie Storage
+
+Aplikasi menggunakan 2 cookie utama:
+- `umroh_session`: Data login user (7 hari)
+- `umroh_activities`: Data aktivitas dan progress (30 hari)
+
+Data JSON di-encode menggunakan `encodeURIComponent()` untuk menangani karakter khusus dan data yang besar.
