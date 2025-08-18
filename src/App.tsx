@@ -3,6 +3,7 @@ import { Calendar, CheckCircle2, Clock, MapPin, Users, LogOut, Menu, X, Filter }
 import LoginPage from './components/LoginPage';
 import Dashboard from './components/Dashboard';
 import HotelInfo from './components/HotelInfo';
+import PWAStatus from './components/PWAStatus';
 import { getCookie, setCookie, removeCookie, setLocalStorage, getLocalStorage, removeLocalStorage } from './utils/cookies';
 
 interface Activity {
@@ -473,6 +474,9 @@ function App() {
         uniforms={uniforms}
         getUniformForDate={getUniformForDate}
       />
+      
+      {/* PWA Status Component */}
+      <PWAStatus />
     </>
   );
 }
