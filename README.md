@@ -43,6 +43,13 @@ Aplikasi tracking jadwal Umroh dengan fitur penyimpanan progress otomatis menggu
 - Tampilan yang terorganisir dengan kategori transit dan Umroh reguler
 - Tombol toggle untuk menampilkan/menyembunyikan informasi hotel
 
+### ✅ **Informasi Penting**
+- **Tab Persiapan**: Checklist lengkap barang yang harus dibawa, peraturan bandara, dan persiapan kesehatan
+- **Tab Tata Tertib Perjalanan**: Peraturan penerbangan, barang terlarang, dan panduan selama di pesawat
+- **Tab Tata Tertib Masjid**: Peraturan di Masjid Nabawi dan Masjidil Haram, jam operasional, dan pemisahan area
+- **Tab Kontak Penting**: Nomor telepon team Indonesia, leader, dan local guide
+- Tampilan tab yang interaktif dengan warna yang berbeda untuk setiap kategori
+
 ### ✅ **Export/Import Data**
 - Export data aktivitas ke file JSON untuk backup
 - Import data dari file JSON untuk memulihkan progress
@@ -54,8 +61,9 @@ Aplikasi tracking jadwal Umroh dengan fitur penyimpanan progress otomatis menggu
 2. **Centang Aktivitas**: Klik lingkaran di sebelah kiri aktivitas untuk menandai selesai
 3. **Filter**: Gunakan sidebar untuk memfilter aktivitas berdasarkan hari atau jenis
 4. **Info Hotel**: Klik "Tampilkan Info Hotel" di sidebar untuk melihat detail akomodasi
-5. **Export/Import**: Gunakan tombol Export/Import untuk backup dan restore data
-6. **Reset**: Klik "Reset Semua Aktivitas" di sidebar jika ingin mengulang dari awal
+5. **Info Penting**: Klik "Tampilkan Info Penting" di sidebar untuk melihat panduan lengkap
+6. **Export/Import**: Gunakan tombol Export/Import untuk backup dan restore data
+7. **Reset**: Klik "Reset Semua Aktivitas" di sidebar jika ingin mengulang dari awal
 
 ## Teknologi
 

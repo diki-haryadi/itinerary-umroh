@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Calendar, CheckCircle2, Clock, MapPin, Users, LogOut, Menu, X, Filter, BarChart3, Hotel } from 'lucide-react';
+import { Calendar, CheckCircle2, Clock, MapPin, Users, LogOut, Menu, X, Filter, BarChart3, Hotel, AlertTriangle } from 'lucide-react';
 import ActivityCard from './ActivityCard';
 import ProgressStats from './ProgressStats';
 import FilterControls from './FilterControls';
 import HotelInfo from './HotelInfo';
+import ImportantInfo from './ImportantInfo';
 
 interface Activity {
   id: string;
@@ -44,6 +45,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, activities, hotels, showHot
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [showCompleted, setShowCompleted] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showImportantInfo, setShowImportantInfo] = useState(false);
 
   const days = Array.from({ length: 11 }, (_, i) => i + 1);
 
@@ -133,20 +135,35 @@ const Dashboard: React.FC<DashboardProps> = ({ user, activities, hotels, showHot
                   onShowCompletedChange={setShowCompleted}
                 />
 
-                {/* Hotel Info Toggle */}
-                <div className="border-t border-gray-200 pt-4">
-                  <button
-                    onClick={onToggleHotelInfo}
-                    className={`w-full px-3 py-2 text-sm rounded-lg transition-colors border flex items-center justify-center space-x-2 ${
-                      showHotelInfo
-                        ? 'bg-amber-50 text-amber-700 border-amber-200'
-                        : 'text-gray-600 hover:text-amber-600 hover:bg-amber-50 border-gray-200 hover:border-amber-200'
-                    }`}
-                  >
-                    <Hotel className="w-4 h-4" />
-                    <span>{showHotelInfo ? 'Sembunyikan' : 'Tampilkan'} Info Hotel</span>
-                  </button>
-                </div>
+                              {/* Hotel Info Toggle */}
+              <div className="border-t border-gray-200 pt-4">
+                <button
+                  onClick={onToggleHotelInfo}
+                  className={`w-full px-3 py-2 text-sm rounded-lg transition-colors border flex items-center justify-center space-x-2 ${
+                    showHotelInfo
+                      ? 'bg-amber-50 text-amber-700 border-amber-200'
+                      : 'text-gray-600 hover:text-amber-600 hover:bg-amber-50 border-gray-200 hover:border-amber-200'
+                  }`}
+                >
+                  <Hotel className="w-4 h-4" />
+                  <span>{showHotelInfo ? 'Sembunyikan' : 'Tampilkan'} Info Hotel</span>
+                </button>
+              </div>
+
+              {/* Important Info Toggle */}
+              <div className="border-t border-gray-200 pt-4">
+                <button
+                  onClick={() => setShowImportantInfo(!showImportantInfo)}
+                  className={`w-full px-3 py-2 text-sm rounded-lg transition-colors border flex items-center justify-center space-x-2 ${
+                    showImportantInfo
+                      ? 'bg-red-50 text-red-700 border-red-200'
+                      : 'text-gray-600 hover:text-red-600 hover:bg-red-50 border-gray-200 hover:border-red-200'
+                  }`}
+                >
+                  <AlertTriangle className="w-4 h-4" />
+                  <span>{showImportantInfo ? 'Sembunyikan' : 'Tampilkan'} Info Penting</span>
+                </button>
+              </div>
 
                 {/* Data Management */}
                 <div className="border-t border-gray-200 pt-4">
@@ -241,6 +258,11 @@ const Dashboard: React.FC<DashboardProps> = ({ user, activities, hotels, showHot
             {/* Hotel Information */}
             {showHotelInfo && (
               <HotelInfo hotels={hotels} />
+            )}
+
+            {/* Important Information */}
+            {showImportantInfo && (
+              <ImportantInfo isOpen={showImportantInfo} />
             )}
 
             {Object.keys(groupedActivities).length === 0 ? (
