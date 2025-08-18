@@ -6,6 +6,7 @@ import FilterControls from './FilterControls';
 import HotelInfo from './HotelInfo';
 import ImportantInfo from './ImportantInfo';
 import ActivityDetailModal from './ActivityDetailModal';
+import UniformInfo from './UniformInfo';
 
 interface Activity {
   id: string;
@@ -136,6 +137,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user, activities, hotels, showHot
                   completedActivities={completedActivities}
                   progressPercentage={progressPercentage}
                 />
+
+                {/* Uniform Info */}
+                <UniformInfo uniforms={uniforms} />
 
                 {/* Filter Controls */}
                 <FilterControls
