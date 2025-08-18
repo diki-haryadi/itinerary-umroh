@@ -29,7 +29,8 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center space-x-2 text-gray-800">
         <Filter className="w-5 h-5" />
         <h3 className="font-semibold">Filter Jadwal</h3>
@@ -37,41 +38,43 @@ const FilterControls: React.FC<FilterControlsProps> = ({
 
       {/* Day Filter */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          <Calendar className="w-4 h-4 inline mr-1" />
-          Hari
+        <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+          <Calendar className="w-4 h-4 mr-2" />
+          Pilih Hari
         </label>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="space-y-2">
           <button
             onClick={() => onDayChange(null)}
-            className={`px-3 py-2 text-sm rounded-lg transition-colors ${
+            className={`w-full px-3 py-2 text-sm rounded-lg transition-colors ${
               selectedDay === null
-                ? 'bg-amber-500 text-white'
+                ? 'bg-amber-500 text-white shadow-sm'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            Semua
+            Semua Hari
           </button>
-          {days.map(day => (
-            <button
-              key={day}
-              onClick={() => onDayChange(day)}
-              className={`px-3 py-2 text-sm rounded-lg transition-colors ${
-                selectedDay === day
-                  ? 'bg-amber-500 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Hari {day}
-            </button>
-          ))}
+          <div className="grid grid-cols-3 gap-2">
+            {days.map(day => (
+              <button
+                key={day}
+                onClick={() => onDayChange(day)}
+                className={`px-3 py-2 text-sm rounded-lg transition-colors ${
+                  selectedDay === day
+                    ? 'bg-amber-500 text-white shadow-sm'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Hari {day}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Type Filter */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          <Tag className="w-4 h-4 inline mr-1" />
+        <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+          <Tag className="w-4 h-4 mr-2" />
           Jenis Aktivitas
         </label>
         <div className="space-y-2">
@@ -79,7 +82,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             onClick={() => onTypeChange(null)}
             className={`w-full px-3 py-2 text-sm text-left rounded-lg transition-colors ${
               selectedType === null
-                ? 'bg-amber-500 text-white'
+                ? 'bg-amber-500 text-white shadow-sm'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
@@ -91,7 +94,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
               onClick={() => onTypeChange(type.value)}
               className={`w-full px-3 py-2 text-sm text-left rounded-lg transition-colors ${
                 selectedType === type.value
-                  ? 'bg-amber-500 text-white'
+                  ? 'bg-amber-500 text-white shadow-sm'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -103,15 +106,15 @@ const FilterControls: React.FC<FilterControlsProps> = ({
 
       {/* Show Completed Toggle */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-3">
           Tampilkan
         </label>
         <button
           onClick={() => onShowCompletedChange(!showCompleted)}
           className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-colors ${
             showCompleted
-              ? 'bg-green-100 text-green-700'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ? 'bg-green-100 text-green-700 border border-green-200'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'
           }`}
         >
           <span>Aktivitas Selesai</span>
@@ -125,16 +128,18 @@ const FilterControls: React.FC<FilterControlsProps> = ({
 
       {/* Reset Filters */}
       {(selectedDay || selectedType || !showCompleted) && (
-        <button
-          onClick={() => {
-            onDayChange(null);
-            onTypeChange(null);
-            onShowCompletedChange(true);
-          }}
-          className="w-full px-3 py-2 text-sm text-amber-600 hover:text-amber-700 border border-amber-200 hover:border-amber-300 rounded-lg transition-colors"
-        >
-          Reset Semua Filter
-        </button>
+        <div className="border-t border-gray-200 pt-4">
+          <button
+            onClick={() => {
+              onDayChange(null);
+              onTypeChange(null);
+              onShowCompletedChange(true);
+            }}
+            className="w-full px-3 py-2 text-sm text-amber-600 hover:text-amber-700 border border-amber-200 hover:border-amber-300 rounded-lg transition-colors hover:bg-amber-50"
+          >
+            Reset Semua Filter
+          </button>
+        </div>
       )}
     </div>
   );

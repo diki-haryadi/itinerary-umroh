@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, CheckCircle2, Clock, MapPin, Users, LogOut, Menu, X, Filter } from 'lucide-react';
 import LoginPage from './components/LoginPage';
 import Dashboard from './components/Dashboard';
+import HotelInfo from './components/HotelInfo';
 import { getCookie, setCookie, removeCookie, setLocalStorage, getLocalStorage, removeLocalStorage } from './utils/cookies';
 
 interface Activity {
@@ -15,6 +16,16 @@ interface Activity {
   type: 'transport' | 'ritual' | 'meal' | 'accommodation' | 'sightseeing';
 }
 
+interface Hotel {
+  id: string;
+  name: string;
+  address: string;
+  phone: string;
+  dates: string;
+  location: string;
+  type: 'transit' | 'umroh';
+}
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<{ email: string; name: string } | null>(null);
@@ -22,6 +33,38 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [showSaveNotification, setShowSaveNotification] = useState(false);
   const [storageAvailable, setStorageAvailable] = useState(true);
+  const [showHotelInfo, setShowHotelInfo] = useState(false);
+
+  // Hotel data
+  const hotels: Hotel[] = [
+    {
+      id: 'hotel-1',
+      name: 'ZEST HOTEL',
+      address: 'Jl. Husein Sastranegara Kav. 1, Tangerang, Banten 15125',
+      phone: '+62 21 2262 3000',
+      dates: '18-19 Aug 2025',
+      location: 'Jakarta - Soekarno Hatta',
+      type: 'transit'
+    },
+    {
+      id: 'hotel-2',
+      name: 'ODST HOTEL',
+      address: 'Abdul Rahman Ibn Awaf Street, Budaah District, Al Markazeiah North, Al Markaziah Shamaliyah, Madinah 15032',
+      phone: '+966 54 414 2661',
+      dates: '20-23 Aug 2025',
+      location: 'Madinah',
+      type: 'umroh'
+    },
+    {
+      id: 'hotel-3',
+      name: 'HOTEL NADA AJYAD',
+      address: 'Alsouq Alsagheer Tunnel, Ajyad, Makkah 24231 Saudi Arabia',
+      phone: '+966 551 492890',
+      dates: '23-27 Aug 2025',
+      location: 'Makkah',
+      type: 'umroh'
+    }
+  ];
 
   // Sample umroh itinerary data
   const defaultActivities: Activity[] = [
@@ -320,6 +363,10 @@ function App() {
     reader.readAsText(file);
   };
 
+  const toggleHotelInfo = () => {
+    setShowHotelInfo(!showHotelInfo);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-green-50 flex items-center justify-center">
@@ -360,6 +407,9 @@ function App() {
         onResetActivities={resetActivities}
         onExportActivities={exportActivities}
         onImportActivities={importActivities}
+        onToggleHotelInfo={toggleHotelInfo}
+        showHotelInfo={showHotelInfo}
+        hotels={hotels}
       />
     </>
   );

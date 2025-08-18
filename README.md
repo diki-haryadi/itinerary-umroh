@@ -37,12 +37,25 @@ Aplikasi tracking jadwal Umroh dengan fitur penyimpanan progress otomatis menggu
 - Tombol reset untuk mengembalikan semua aktivitas ke status awal
 - Konfirmasi dialog untuk mencegah reset tidak sengaja
 
+### ✅ **Informasi Hotel**
+- Detail lengkap hotel transit dan hotel Umroh
+- Informasi alamat, nomor telepon, dan tanggal menginap
+- Tampilan yang terorganisir dengan kategori transit dan Umroh reguler
+- Tombol toggle untuk menampilkan/menyembunyikan informasi hotel
+
+### ✅ **Export/Import Data**
+- Export data aktivitas ke file JSON untuk backup
+- Import data dari file JSON untuk memulihkan progress
+- Format file yang terstruktur dengan metadata
+
 ## Cara Penggunaan
 
 1. **Login**: Gunakan email `admin@gmail.com` dan password `admin`
 2. **Centang Aktivitas**: Klik lingkaran di sebelah kiri aktivitas untuk menandai selesai
 3. **Filter**: Gunakan sidebar untuk memfilter aktivitas berdasarkan hari atau jenis
-4. **Reset**: Klik "Reset Semua Aktivitas" di sidebar jika ingin mengulang dari awal
+4. **Info Hotel**: Klik "Tampilkan Info Hotel" di sidebar untuk melihat detail akomodasi
+5. **Export/Import**: Gunakan tombol Export/Import untuk backup dan restore data
+6. **Reset**: Klik "Reset Semua Aktivitas" di sidebar jika ingin mengulang dari awal
 
 ## Teknologi
 
@@ -64,6 +77,19 @@ interface Activity {
   day: number;          // Hari ke berapa (1-11)
   completed: boolean;   // Status selesai
   type: 'transport' | 'ritual' | 'meal' | 'accommodation' | 'sightseeing';
+}
+```
+
+Setiap hotel memiliki properti:
+```typescript
+interface Hotel {
+  id: string;           // ID unik hotel
+  name: string;         // Nama hotel
+  address: string;      // Alamat lengkap hotel
+  phone: string;        // Nomor telepon hotel
+  dates: string;        // Tanggal menginap
+  location: string;     // Lokasi kota
+  type: 'transit' | 'umroh'; // Jenis hotel
 }
 ```
 
