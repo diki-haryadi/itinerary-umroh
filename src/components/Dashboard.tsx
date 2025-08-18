@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, CheckCircle2, Clock, MapPin, Users, LogOut, Menu, X, Filter, BarChart3, Hotel, AlertTriangle } from 'lucide-react';
+import { Calendar, CheckCircle2, Clock, MapPin, Users, LogOut, Menu, X, Filter, BarChart3, Hotel, AlertTriangle, Shield } from 'lucide-react';
 import ActivityCard from './ActivityCard';
 import ProgressStats from './ProgressStats';
 import FilterControls from './FilterControls';
@@ -41,6 +41,7 @@ interface DashboardProps {
   activities: Activity[];
   hotels: Hotel[];
   showHotelInfo: boolean;
+  showVaccineInfo: boolean;
   onLogout: () => void;
   onToggleActivity: (activityId: string) => void;
   onActivityDetail: (activity: Activity) => void;
@@ -48,13 +49,14 @@ interface DashboardProps {
   onExportActivities: () => void;
   onImportActivities: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onToggleHotelInfo: () => void;
+  onToggleVaccineInfo: () => void;
   selectedActivity: Activity | null;
   onCloseActivityDetail: () => void;
   uniforms: Uniform[];
   getUniformForDate: (date: string) => Uniform | null;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ user, activities, hotels, showHotelInfo, onLogout, onToggleActivity, onActivityDetail, onResetActivities, onExportActivities, onImportActivities, onToggleHotelInfo, selectedActivity, onCloseActivityDetail, uniforms, getUniformForDate }) => {
+const Dashboard: React.FC<DashboardProps> = ({ user, activities, hotels, showHotelInfo, showVaccineInfo, onLogout, onToggleActivity, onActivityDetail, onResetActivities, onExportActivities, onImportActivities, onToggleHotelInfo, onToggleVaccineInfo, selectedActivity, onCloseActivityDetail, uniforms, getUniformForDate }) => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -179,6 +181,21 @@ const Dashboard: React.FC<DashboardProps> = ({ user, activities, hotels, showHot
                 >
                   <AlertTriangle className="w-4 h-4" />
                   <span>{showImportantInfo ? 'Sembunyikan' : 'Tampilkan'} Info Penting</span>
+                </button>
+              </div>
+
+              {/* Vaccine Info Toggle */}
+              <div className="border-t border-gray-200 pt-4">
+                <button
+                  onClick={onToggleVaccineInfo}
+                  className={`w-full px-3 py-2 text-sm rounded-lg transition-colors border flex items-center justify-center space-x-2 ${
+                    showVaccineInfo
+                      ? 'bg-blue-50 text-blue-700 border-blue-200'
+                      : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50 border-gray-200 hover:border-blue-200'
+                  }`}
+                >
+                  <Shield className="w-4 h-4" />
+                  <span>{showVaccineInfo ? 'Sembunyikan' : 'Tampilkan'} Sertifikat Vaksin</span>
                 </button>
               </div>
 

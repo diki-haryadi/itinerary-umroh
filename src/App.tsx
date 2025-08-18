@@ -4,6 +4,7 @@ import LoginPage from './components/LoginPage';
 import Dashboard from './components/Dashboard';
 import HotelInfo from './components/HotelInfo';
 import PWAStatus from './components/PWAStatus';
+import VaccineInfo from './components/VaccineInfo';
 import { getCookie, setCookie, removeCookie, setLocalStorage, getLocalStorage, removeLocalStorage } from './utils/cookies';
 
 interface Activity {
@@ -42,6 +43,7 @@ function App() {
   const [showSaveNotification, setShowSaveNotification] = useState(false);
   const [storageAvailable, setStorageAvailable] = useState(true);
   const [showHotelInfo, setShowHotelInfo] = useState(false);
+  const [showVaccineInfo, setShowVaccineInfo] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
 
   // Uniform data based on the image
@@ -410,6 +412,10 @@ function App() {
     setShowHotelInfo(!showHotelInfo);
   };
 
+  const toggleVaccineInfo = () => {
+    setShowVaccineInfo(!showVaccineInfo);
+  };
+
   // Function to get uniform for a specific date
   const getUniformForDate = (date: string): Uniform | null => {
     return uniforms.find(uniform => uniform.date === date) || null;
@@ -468,6 +474,8 @@ function App() {
         onImportActivities={importActivities}
         onToggleHotelInfo={toggleHotelInfo}
         showHotelInfo={showHotelInfo}
+        onToggleVaccineInfo={toggleVaccineInfo}
+        showVaccineInfo={showVaccineInfo}
         hotels={hotels}
         selectedActivity={selectedActivity}
         onCloseActivityDetail={closeActivityDetail}
@@ -477,6 +485,12 @@ function App() {
       
       {/* PWA Status Component */}
       <PWAStatus />
+      
+      {/* Vaccine Info Component */}
+      <VaccineInfo 
+        isOpen={showVaccineInfo} 
+        onClose={() => setShowVaccineInfo(false)} 
+      />
     </>
   );
 }

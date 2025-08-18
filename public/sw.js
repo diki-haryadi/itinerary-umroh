@@ -4,6 +4,7 @@ const urlsToCache = [
   '/index.html',
   '/offline.html',
   '/manifest.json',
+  '/vaksin.png',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
 ];
 
