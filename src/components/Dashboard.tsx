@@ -5,6 +5,7 @@ import ProgressStats from './ProgressStats';
 import FilterControls from './FilterControls';
 import HotelInfo from './HotelInfo';
 import ImportantInfo from './ImportantInfo';
+import ActivityDetailModal from './ActivityDetailModal';
 
 interface Activity {
   id: string;
@@ -27,6 +28,13 @@ interface Hotel {
   type: 'transit' | 'umroh';
 }
 
+interface Uniform {
+  date: string;
+  male: string;
+  female: string;
+  description: string;
+}
+
 interface DashboardProps {
   user: { email: string; name: string } | null;
   activities: Activity[];
@@ -34,13 +42,18 @@ interface DashboardProps {
   showHotelInfo: boolean;
   onLogout: () => void;
   onToggleActivity: (activityId: string) => void;
+  onActivityDetail: (activity: Activity) => void;
   onResetActivities: () => void;
   onExportActivities: () => void;
   onImportActivities: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onToggleHotelInfo: () => void;
+  selectedActivity: Activity | null;
+  onCloseActivityDetail: () => void;
+  uniforms: Uniform[];
+  getUniformForDate: (date: string) => Uniform | null;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ user, activities, hotels, showHotelInfo, onLogout, onToggleActivity, onResetActivities, onExportActivities, onImportActivities, onToggleHotelInfo }) => {
+const Dashboard: React.FC<DashboardProps> = ({ user, activities, hotels, showHotelInfo, onLogout, onToggleActivity, onActivityDetail, onResetActivities, onExportActivities, onImportActivities, onToggleHotelInfo, selectedActivity, onCloseActivityDetail, uniforms, getUniformForDate }) => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -306,6 +319,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, activities, hotels, showHot
                             key={activity.id}
                             activity={activity}
                             onToggle={() => onToggleActivity(activity.id)}
+                            onDetail={() => onActivityDetail(activity)}
                           />
                         ))}
                     </div>
@@ -315,6 +329,14 @@ const Dashboard: React.FC<DashboardProps> = ({ user, activities, hotels, showHot
           </div>
         </div>
       </div>
+
+      {/* Activity Detail Modal */}
+      <ActivityDetailModal
+        activity={selectedActivity}
+        onClose={onCloseActivityDetail}
+        uniforms={uniforms}
+        getUniformForDate={getUniformForDate}
+      />
     </div>
   );
 };

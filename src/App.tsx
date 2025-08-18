@@ -13,7 +13,14 @@ interface Activity {
   location: string;
   day: number;
   completed: boolean;
-  type: 'transport' | 'ritual' | 'meal' | 'accommodation' | 'sightseeing';
+  type: 'ritual' | 'meal' | 'transport' | 'accommodation' | 'sightseeing';
+}
+
+interface Uniform {
+  date: string;
+  male: string;
+  female: string;
+  description: string;
 }
 
 interface Hotel {
@@ -34,6 +41,41 @@ function App() {
   const [showSaveNotification, setShowSaveNotification] = useState(false);
   const [storageAvailable, setStorageAvailable] = useState(true);
   const [showHotelInfo, setShowHotelInfo] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
+
+  // Uniform data based on the image
+  const uniforms: Uniform[] = [
+    {
+      date: 'Senin, 18 Agustus 2025',
+      male: 'Kemko, Syal, Peci Putih',
+      female: 'Gamis Putih, Syal, Kerudung Putih Lengkap',
+      description: 'Keberangkatan Rombongan Jamaah Tasikmalaya Ke Hotel Transit'
+    },
+    {
+      date: 'Selasa, 19 Agustus 2025',
+      male: 'Kemko, Syal, Peci Putih',
+      female: 'Gamis Cokelat, Syal, Kerudung Cokelat Lengkap',
+      description: 'Jakarta - Jeddah - Madinah'
+    },
+    {
+      date: 'Sabtu, 23 Agustus 2025',
+      male: 'Kemko, Syal, Peci Putih, Kain Ihrom',
+      female: 'Gamis Putih, Syal, Kerudung Putih Lengkap',
+      description: 'Madinah - Makkah - Umroh Pertama'
+    },
+    {
+      date: 'Senin, 25 Agustus 2025',
+      male: 'Kemko, Syal, Peci Putih, Kain Ihrom',
+      female: 'Gamis Cokelat, Syal, Kerudung Cokelat Lengkap',
+      description: 'City Tour - Umroh Kedua'
+    },
+    {
+      date: 'Rabu, 27 Agustus 2025',
+      male: 'Kemko, Syal, Peci Putih',
+      female: 'Gamis Cokelat, Syal, Kerudung Cokelat Lengkap',
+      description: 'Kepulangan Jeddah - Jakarta'
+    }
+  ];
 
   // Hotel data
   const hotels: Hotel[] = [
@@ -367,6 +409,21 @@ function App() {
     setShowHotelInfo(!showHotelInfo);
   };
 
+  // Function to get uniform for a specific date
+  const getUniformForDate = (date: string): Uniform | null => {
+    return uniforms.find(uniform => uniform.date === date) || null;
+  };
+
+  // Function to handle activity detail click
+  const handleActivityDetail = (activity: Activity) => {
+    setSelectedActivity(activity);
+  };
+
+  // Function to close activity detail
+  const closeActivityDetail = () => {
+    setSelectedActivity(null);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-green-50 flex items-center justify-center">
@@ -404,12 +461,17 @@ function App() {
         activities={activities}
         onLogout={handleLogout}
         onToggleActivity={toggleActivityCompletion}
+        onActivityDetail={handleActivityDetail}
         onResetActivities={resetActivities}
         onExportActivities={exportActivities}
         onImportActivities={importActivities}
         onToggleHotelInfo={toggleHotelInfo}
         showHotelInfo={showHotelInfo}
         hotels={hotels}
+        selectedActivity={selectedActivity}
+        onCloseActivityDetail={closeActivityDetail}
+        uniforms={uniforms}
+        getUniformForDate={getUniformForDate}
       />
     </>
   );

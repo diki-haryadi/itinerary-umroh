@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle2, Circle, Clock, MapPin, Plane, Utensils, Home, Camera, Compass } from 'lucide-react';
+import { CheckCircle2, Circle, Clock, MapPin, Plane, Utensils, Home, Camera, Compass, Info } from 'lucide-react';
 
 interface Activity {
   id: string;
@@ -15,9 +15,10 @@ interface Activity {
 interface ActivityCardProps {
   activity: Activity;
   onToggle: () => void;
+  onDetail?: () => void;
 }
 
-const ActivityCard: React.FC<ActivityCardProps> = ({ activity, onToggle }) => {
+const ActivityCard: React.FC<ActivityCardProps> = ({ activity, onToggle, onDetail }) => {
   const getTypeIcon = (type: string) => {
     const iconProps = { className: "w-4 h-4" };
     switch (type) {
@@ -111,11 +112,22 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, onToggle }) => {
                   {activity.description}
                 </p>
               </div>
-              <div className={`ml-4 px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(activity.type)}`}>
-                <div className="flex items-center space-x-1">
-                  {getTypeIcon(activity.type)}
-                  <span className="hidden sm:inline">{getTypeName(activity.type)}</span>
+              <div className="flex items-center space-x-2 ml-4">
+                <div className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(activity.type)}`}>
+                  <div className="flex items-center space-x-1">
+                    {getTypeIcon(activity.type)}
+                    <span className="hidden sm:inline">{getTypeName(activity.type)}</span>
+                  </div>
                 </div>
+                {onDetail && (
+                  <button
+                    onClick={onDetail}
+                    className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                    title="Lihat Detail"
+                  >
+                    <Info className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
 
