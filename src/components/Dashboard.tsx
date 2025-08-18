@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, CheckCircle2, Clock, MapPin, Users, LogOut, Menu, X, Filter, BarChart3, Hotel, AlertTriangle, Shield } from 'lucide-react';
+import { Calendar, CheckCircle2, Clock, MapPin, Users, LogOut, Menu, X, Filter, BarChart3, Hotel, AlertTriangle, Shield, RefreshCw } from 'lucide-react';
 import ActivityCard from './ActivityCard';
 import ProgressStats from './ProgressStats';
 import FilterControls from './FilterControls';
@@ -7,6 +7,7 @@ import HotelInfo from './HotelInfo';
 import ImportantInfo from './ImportantInfo';
 import ActivityDetailModal from './ActivityDetailModal';
 import UniformInfo from './UniformInfo';
+import { hardRefresh } from '../utils/pwa';
 
 interface Activity {
   id: string;
@@ -62,6 +63,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, activities, hotels, showHot
   const [showCompleted, setShowCompleted] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showImportantInfo, setShowImportantInfo] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const days = Array.from({ length: 11 }, (_, i) => i + 1);
 
@@ -92,6 +94,18 @@ const Dashboard: React.FC<DashboardProps> = ({ user, activities, hotels, showHot
   const getDayDate = (day: number) => {
     const dates = ['18 Agustus', '19 Agustus', '20 Agustus', '21 Agustus', '22 Agustus', '23 Agustus', '24 Agustus', '25 Agustus', '26 Agustus', '27 Agustus', '28 Agustus'];
     return dates[day - 1] || '';
+  };
+
+  const handleHardRefresh = async () => {
+    if (window.confirm('Hard refresh akan membersihkan cache dan memuat ulang aplikasi. Lanjutkan?')) {
+      setIsRefreshing(true);
+      try {
+        await hardRefresh();
+      } catch (error) {
+        console.error('Hard refresh failed:', error);
+        setIsRefreshing(false);
+      }
+    }
   };
 
   return (
@@ -218,6 +232,29 @@ const Dashboard: React.FC<DashboardProps> = ({ user, activities, hotels, showHot
                         className="hidden"
                       />
                     </label>
+                  </div>
+                </div>
+
+                {/* App Management */}
+                <div className="border-t border-gray-200 pt-4">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Kelola Aplikasi</h3>
+                  <div className="space-y-2">
+                    <button
+                      onClick={handleHardRefresh}
+                      disabled={isRefreshing}
+                      className={`w-full px-3 py-2 text-sm rounded-lg transition-colors border flex items-center justify-center space-x-2 ${
+                        isRefreshing
+                          ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                          : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50 border-gray-200 hover:border-purple-200'
+                      }`}
+                      title="Membersihkan cache dan memuat ulang aplikasi (Ctrl+Shift+R)"
+                    >
+                      <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                      <span>{isRefreshing ? 'Memuat Ulang...' : 'Hard Refresh Cache'}</span>
+                    </button>
+                    <p className="text-xs text-gray-500 text-center">
+                      Membersihkan cache browser dan memuat ulang aplikasi
+                    </p>
                   </div>
                 </div>
 

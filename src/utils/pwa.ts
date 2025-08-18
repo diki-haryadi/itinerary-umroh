@@ -88,3 +88,40 @@ export const getCacheSize = async (): Promise<number> => {
   }
   return 0;
 };
+
+// Hard refresh function - equivalent to Ctrl+Shift+R
+export const hardRefresh = async () => {
+  try {
+    // Clear all caches
+    await clearCache();
+    
+    // Clear localStorage (optional - you can customize this)
+    // localStorage.clear();
+    
+    // Clear sessionStorage
+    sessionStorage.clear();
+    
+    // Unregister service worker to force reload
+    if ('serviceWorker' in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(
+        registrations.map(registration => registration.unregister())
+      );
+    }
+    
+    // Force reload the page
+    window.location.reload();
+    
+    return true;
+  } catch (error) {
+    console.error('Error during hard refresh:', error);
+    // Fallback to simple reload
+    window.location.reload();
+    return false;
+  }
+};
+
+// Soft refresh - just reload without clearing cache
+export const softRefresh = () => {
+  window.location.reload();
+};
